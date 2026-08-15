@@ -1,0 +1,868 @@
+id: soundcloud.com
+version: 0.1.0
+name: SoundCloud
+url: soundcloud.com
+iconSvg: |-
+  <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+  <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+  <svg width="100%" height="100%" viewBox="0 0 205 92" version="1.1"
+  	xmlns="http://www.w3.org/2000/svg"
+  	xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+  	xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+  	<g transform="matrix(1,0,0,1,0.000252,0.000007)">
+  		<g transform="matrix(4.166667,0,0,4.166667,0.000798,0.000022)">
+  			<path d="M49.139,15.466C48.934,19.126 45.838,22.013 42.173,21.961L25.429,21.961C24.667,21.953 24.043,21.327 24.039,20.565L24.039,2.536C24.015,1.904 24.384,1.319 24.964,1.068C25.544,0.817 26.504,0 29.748,0C31.73,-0.002 33.676,0.532 35.378,1.547C38.063,3.127 39.965,5.762 40.62,8.807C41.198,8.644 41.796,8.563 42.396,8.565C42.411,8.565 42.425,8.565 42.44,8.565C46.117,8.565 49.143,11.591 49.143,15.268C49.143,15.334 49.142,15.4 49.14,15.466L49.139,15.466ZM21.949,3.676C22.454,9.791 22.821,15.368 21.949,21.463C21.918,21.736 21.684,21.945 21.409,21.945C21.133,21.945 20.899,21.736 20.868,21.463C20.055,15.42 20.408,9.738 20.868,3.676C20.866,3.655 20.864,3.634 20.864,3.613C20.864,3.315 21.109,3.071 21.406,3.071C21.51,3.071 21.611,3.1 21.698,3.156C21.874,3.266 21.972,3.469 21.948,3.676L21.949,3.676ZM18.56,21.469C18.521,21.749 18.279,21.959 17.996,21.959C17.714,21.959 17.472,21.749 17.433,21.469C16.827,16.255 16.827,10.988 17.433,5.774C17.463,5.485 17.709,5.262 18,5.262C18.291,5.262 18.537,5.485 18.567,5.774C19.24,10.984 19.237,16.259 18.56,21.469ZM15.166,5.243C15.716,10.846 15.966,15.866 15.16,21.456C15.143,21.742 14.903,21.968 14.616,21.968C14.329,21.968 14.089,21.742 14.072,21.456C13.292,15.938 13.554,10.774 14.072,5.243C14.102,4.963 14.338,4.753 14.619,4.753C14.899,4.753 15.136,4.963 15.166,5.243ZM11.766,21.476C11.729,21.752 11.491,21.96 11.212,21.96C10.933,21.96 10.695,21.752 10.658,21.476C10.032,16.611 10.032,11.687 10.658,6.822C10.658,6.513 10.912,6.259 11.222,6.259C11.531,6.259 11.785,6.513 11.785,6.822C12.45,11.684 12.443,16.615 11.765,21.476L11.766,21.476ZM8.37,10.486C9.229,14.286 8.842,17.642 8.338,21.515C8.296,21.771 8.073,21.961 7.813,21.961C7.553,21.961 7.33,21.771 7.288,21.515C6.83,17.695 6.45,14.26 7.256,10.485C7.274,10.192 7.52,9.961 7.813,9.961C8.107,9.961 8.353,10.193 8.37,10.486ZM4.982,9.909C5.769,13.802 5.512,17.098 4.962,21.004C4.897,21.581 3.908,21.587 3.855,21.004C3.357,17.157 3.121,13.762 3.835,9.909C3.871,9.621 4.118,9.403 4.408,9.403C4.699,9.403 4.946,9.621 4.982,9.909ZM1.562,11.796C2.387,14.378 2.105,16.476 1.529,19.123C1.505,19.399 1.271,19.614 0.994,19.614C0.717,19.614 0.483,19.399 0.459,19.123C-0.038,16.528 -0.241,14.385 0.415,11.796C0.44,11.5 0.691,11.269 0.988,11.269C1.285,11.269 1.536,11.5 1.561,11.796L1.562,11.796Z" style="fill:rgb(255,85,0);"/>
+  		</g>
+  	</g>
+  </svg>
+highlightColor: "#FF5500"
+login:
+  url: https://soundcloud.com/signin
+  required: false
+  cookies:
+    - oauth_token
+context:
+  - title: Extract SoundCloud Credentials
+    url: https://soundcloud.com
+    intervalSeconds: 300
+    customUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15
+    userScripts:
+      - title: Extract Client ID
+        content: |
+          (function() {
+            'use strict';
+
+            var foundClientId = false;
+            var foundUserId = false;
+
+            function checkAllValuesFound() {
+              if (foundClientId) boppaContextDone();
+            }
+
+            function checkUrl(url) {
+              if (typeof url !== 'string') return;
+              if (!foundClientId) {
+                var clientMatch = url.match(/client_id=([^&]+)/);
+                if (clientMatch && /api.*soundcloud\.com/.test(url)) {
+                  boppaSetContextValues({ SOUNDCLOUD_CLIENT_ID: clientMatch[1] });
+                  foundClientId = true;
+                  checkAllValuesFound();
+                }
+              }
+              if (!foundUserId) {
+                var userMatch = url.match(/api-v2\.soundcloud\.com\/users\/([^\/]+)\/track_likes/);
+                if (userMatch) {
+                  boppaSetContextValues({ SOUNDCLOUD_USER_ID: userMatch[1] });
+                  foundUserId = true;
+                  checkAllValuesFound();
+                }
+              }
+            }
+
+            var origFetch = window.fetch;
+            window.fetch = function() {
+              var url = arguments[0];
+              if (typeof url === 'string') {
+                checkUrl(url);
+              } else if (url && url.url) {
+                checkUrl(url.url);
+              }
+              return origFetch.apply(this, arguments);
+            };
+
+            var origXHR = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function() {
+              checkUrl(arguments[1]);
+              return origXHR.apply(this, arguments);
+            };
+          })();
+        injectionTime: atDocumentStart
+data:
+  search:
+    songs: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const query = params.query;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/search/tracks?q=' + encodeURIComponent(query) + '&client_id=' + clientId;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: data.collection.filter(t => t.policy !== 'SNIP').map(t => {
+          const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+          const streamRequestUrl = (
+            tc?.find(x => x.preset === 'aac_160k')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'opus_0_0')
+            || tc?.[0]
+          )?.url || null;
+          return {
+            id: t.id,
+            title: t.title,
+            subtitle: t.user?.username,
+            artists: t.user?.username ? [{ id: t.user.id, name: t.user.username, metadata: { id: t.user.id } }] : [],
+            duration: t.duration,
+            lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+            highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+            url: t.permalink_url,
+            metadata: { streamRequestUrl: streamRequestUrl || null }
+          };
+        }),
+        nextHref: data.next_href || null
+      });
+    albums: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const query = params.query;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/search/albums?q=' + encodeURIComponent(query) + '&client_id=' + clientId;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: data.collection.map(a => ({
+          id: a.id,
+          title: a.title,
+          subtitle: a.user?.username,
+          trackCount: a.track_count,
+          lowResArtworkUrl: a.artwork_url || a.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(a.artwork_url || a.user?.avatar_url),
+          url: a.permalink_url,
+          metadata: {
+            id: a.id,
+            trackIds: (a.tracks || []).map(t => t.id)
+          }
+        })),
+        nextHref: data.next_href || null
+      });
+    artists: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const query = params.query;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/search/users?q=' + encodeURIComponent(query) + '&client_id=' + clientId;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: data.collection.map(u => ({
+          id: u.id,
+          name: u.username,
+          lowResArtworkUrl: u.avatar_url,
+          highResArtworkUrl: upgradeArtwork(u.avatar_url),
+          url: u.permalink_url,
+          metadata: {
+            id: u.id
+          }
+        })),
+        nextHref: data.next_href || null
+      });
+    playlists: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const query = params.query;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/search/playlists_without_albums?q=' + encodeURIComponent(query) + '&client_id=' + clientId;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: data.collection.map(p => ({
+          id: p.id,
+          title: p.title,
+          subtitle: p.user?.username,
+          trackCount: p.track_count,
+          lowResArtworkUrl: p.artwork_url || p.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(p.artwork_url || p.user?.avatar_url),
+          url: p.permalink_url,
+          metadata: {
+            id: p.id,
+            trackIds: (p.tracks || []).map(t => t.id)
+          }
+        })),
+        nextHref: data.next_href || null
+      });
+  list:
+    album: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const pageSize = 10;
+      const offset = params.previousResult?.nextOffset || 0;
+      let trackIds = params.previousResult?.trackIds;
+
+      if (!trackIds) {
+        const albumResp = await fetch('https://api-v2.soundcloud.com/playlists/' + params.id + '?client_id=' + clientId);
+        const albumData = await albumResp.json();
+        trackIds = (albumData.tracks || []).map(t => t.id);
+      }
+
+      const pageIds = trackIds.slice(offset, offset + pageSize);
+
+      if (pageIds.length === 0) {
+        postResult({ items: [] });
+      } else {
+        const resp = await fetch('https://api-v2.soundcloud.com/tracks?ids=' + pageIds.join('%2C') + '&client_id=' + clientId);
+        const data = await resp.json();
+        const trackMap = {};
+        if (Array.isArray(data)) { for (const t of data) { trackMap[t.id] = t; } }
+        const items = pageIds.map(id => {
+          const t = trackMap[id];
+          if (!t || t.policy === 'SNIP') return null;
+          const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+          const streamUrl = (
+            tc?.find(x => x.preset === 'aac_160k')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'opus_0_0')
+            || tc?.[0]
+          )?.url || null;
+          return {
+            id: t.id, title: t.title, subtitle: t.user?.username,
+            artists: t.user?.username ? [{ id: t.user.id, name: t.user.username }] : [],
+            duration: t.duration,
+            lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+            highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+            url: t.permalink_url,
+            metadata: { streamRequestUrl: streamUrl || null }
+          };
+        }).filter(Boolean);
+        const nextOffset = offset + pageSize;
+        const output = { items: items };
+        if (nextOffset < trackIds.length) { output.nextOffset = nextOffset; output.trackIds = trackIds; }
+        postResult(output);
+      }
+    playlist: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const pageSize = 10;
+      const offset = params.previousResult?.nextOffset || 0;
+      let trackIds = params.previousResult?.trackIds;
+
+      if (!trackIds) {
+        const playlistResp = await fetch('https://api-v2.soundcloud.com/playlists/' + params.id + '?client_id=' + clientId);
+        const playlistData = await playlistResp.json();
+        trackIds = (playlistData.tracks || []).map(t => t.id);
+      }
+
+      const pageIds = trackIds.slice(offset, offset + pageSize);
+
+      if (pageIds.length === 0) {
+        postResult({ items: [] });
+      } else {
+        const resp = await fetch('https://api-v2.soundcloud.com/tracks?ids=' + pageIds.join('%2C') + '&client_id=' + clientId);
+        const data = await resp.json();
+        const trackMap = {};
+        if (Array.isArray(data)) { for (const t of data) { trackMap[t.id] = t; } }
+        const items = pageIds.map(id => {
+          const t = trackMap[id];
+          if (!t || t.policy === 'SNIP') return null;
+          const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+          const streamUrl = (
+            tc?.find(x => x.preset === 'aac_160k')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'opus_0_0')
+            || tc?.[0]
+          )?.url || null;
+          return {
+            id: t.id, title: t.title, subtitle: t.user?.username,
+            artists: t.user?.username ? [{ id: t.user.id, name: t.user.username }] : [],
+            duration: t.duration,
+            lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+            highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+            url: t.permalink_url,
+            metadata: { streamRequestUrl: streamUrl || null }
+          };
+        }).filter(Boolean);
+        const nextOffset = offset + pageSize;
+        const output = { items: items };
+        if (nextOffset < trackIds.length) { output.nextOffset = nextOffset; output.trackIds = trackIds; }
+        postResult(output);
+      }
+    artistSongs: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const userId = params.id;
+      const continuation = params.previousResult?.nextHref;
+
+      const url = continuation
+        ? continuation + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/stream/users/' + userId + '?client_id=' + clientId + '&limit=20&linked_partitioning=1';
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      const items = [];
+      for (const item of (data.collection || [])) {
+        const t = item.track;
+        if (!t || t.policy === 'SNIP') continue;
+        const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+        const streamUrl = (
+          tc?.find(x => x.preset === 'aac_160k')
+          || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+          || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+          || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+          || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+          || tc?.find(x => x.preset === 'opus_0_0')
+          || tc?.[0]
+        )?.url || null;
+        items.push({
+          id: t.id, title: t.title, subtitle: t.user?.username,
+          artists: t.user?.username ? [{ id: t.user.id, name: t.user.username }] : [],
+          duration: t.duration,
+          lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+          url: t.permalink_url,
+          metadata: { streamRequestUrl: streamUrl || null }
+        });
+      }
+
+      const output = { items: items };
+      if (data.next_href) output.nextHref = data.next_href;
+      postResult(output);
+    artistAlbums: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const userId = params.id;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/users/' + userId + '/albums?client_id=' + clientId + '&limit=10&linked_partitioning=1';
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: (data.collection || []).map(a => ({
+          id: a.id, title: a.title, subtitle: a.user?.username,
+          trackCount: a.track_count,
+          lowResArtworkUrl: a.artwork_url || a.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(a.artwork_url || a.user?.avatar_url),
+          url: a.permalink_url
+        })),
+        nextHref: data.next_href || null
+      });
+    artistPlaylists: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const userId = params.id;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/users/' + userId + '/playlists_without_albums?client_id=' + clientId + '&limit=10&linked_partitioning=1';
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: (data.collection || []).map(p => ({
+          id: p.id, title: p.title, subtitle: p.user?.username,
+          trackCount: p.track_count,
+          lowResArtworkUrl: p.artwork_url || p.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(p.artwork_url || p.user?.avatar_url),
+          url: p.permalink_url
+        })),
+        nextHref: data.next_href || null
+      });
+    trackRadio: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const trackId = params.id;
+      const url = params.previousResult?.nextHref
+        ? params.previousResult.nextHref + '&client_id=' + clientId
+        : 'https://api-v2.soundcloud.com/tracks/' + trackId + '/related?client_id=' + clientId + '&limit=20';
+      const resp = await fetch(url);
+      const data = await resp.json();
+      postResult({
+        items: (data.collection || []).filter(t => t.policy !== 'SNIP').map(t => {
+          const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+          const streamRequestUrl = (
+            tc?.find(x => x.preset === 'aac_160k')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+            || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+            || tc?.find(x => x.preset === 'opus_0_0')
+            || tc?.[0]
+          )?.url || null;
+          return {
+            id: t.id,
+            title: t.title,
+            subtitle: t.user?.username,
+            artists: t.user?.username ? [{ id: t.user.id, name: t.user.username, metadata: { id: t.user.id } }] : [],
+            duration: t.duration,
+            lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+            highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+            url: t.permalink_url,
+            metadata: { streamRequestUrl: streamRequestUrl || null }
+          };
+        }),
+        nextHref: data.next_href || null
+      });
+  get:
+    artist: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const userId = params.id;
+
+      const resp = await fetch('https://api-v2.soundcloud.com/stream/users/' + userId + '?client_id=' + clientId + '&limit=20&linked_partitioning=1');
+      const data = await resp.json();
+
+      const artistAvatarUrl = data.collection?.[0]?.user?.avatar_url || data.collection?.[0]?.track?.user?.avatar_url;
+
+      const songs = [];
+      for (const item of (data.collection || [])) {
+        const t = item.track;
+        if (!t || t.policy === 'SNIP') continue;
+        const tc = t.media?.transcodings?.filter(x => !x.format?.protocol?.includes('encrypted'));
+        const streamUrl = (
+          tc?.find(x => x.preset === 'aac_160k')
+          || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'hls')
+          || tc?.find(x => x.preset === 'mp3_1_0' && x.format?.protocol === 'progressive')
+          || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'hls')
+          || tc?.find(x => x.preset === 'mp3_0_0' && x.format?.protocol === 'progressive')
+          || tc?.find(x => x.preset === 'opus_0_0')
+          || tc?.[0]
+        )?.url || null;
+        songs.push({
+          id: t.id, title: t.title, subtitle: t.user?.username,
+          artists: t.user?.username ? [{ id: t.user.id, name: t.user.username }] : [],
+          duration: t.duration,
+          lowResArtworkUrl: t.artwork_url || t.user?.avatar_url,
+          highResArtworkUrl: upgradeArtwork(t.artwork_url || t.user?.avatar_url),
+          url: t.permalink_url,
+          metadata: { streamRequestUrl: streamUrl || null }
+        });
+      }
+
+      postResult({
+        lowResArtworkUrl: artistAvatarUrl,
+        highResArtworkUrl: upgradeArtwork(artistAvatarUrl),
+        songs: songs, albums: [], playlists: [], __keyOrder: ['songs', 'albums', 'playlists']
+      });
+    album: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const resp = await fetch('https://api-v2.soundcloud.com/playlists/' + params.id + '?client_id=' + clientId);
+      const data = await resp.json();
+      postResult({
+        id: data.id, title: data.title, subtitle: data.user?.username,
+        trackCount: data.track_count,
+        lowResArtworkUrl: data.artwork_url || data.user?.avatar_url,
+        highResArtworkUrl: upgradeArtwork(data.artwork_url || data.user?.avatar_url),
+        url: data.permalink_url
+      });
+    playlist: |
+      const clientId = params.context.SOUNDCLOUD_CLIENT_ID;
+      function upgradeArtwork(url) {
+        if (!url) return url;
+        return url.replace(/-large(\.[a-zA-Z]+)$/, '-t1080x1080$1');
+      }
+      const resp = await fetch('https://api-v2.soundcloud.com/playlists/' + params.id + '?client_id=' + clientId);
+      const data = await resp.json();
+      postResult({
+        id: data.id, title: data.title, subtitle: data.user?.username,
+        trackCount: data.track_count,
+        lowResArtworkUrl: data.artwork_url || data.user?.avatar_url,
+        highResArtworkUrl: upgradeArtwork(data.artwork_url || data.user?.avatar_url),
+        url: data.permalink_url
+      });
+playback:
+  customUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15
+  html: |-
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>* { margin: 0; padding: 0; } html, body, iframe { width: 100%; height: 100%; border: none; overflow: hidden; }</style>
+    </head>
+    <body>
+        <iframe id="player-frame" src="https://soundcloud.com/robots.txt" style="width:100%;height:100%;border:none;"></iframe>
+    </body>
+    </html>
+  userScripts:
+    - title: Media Session Bridge
+      content: |
+        (function() {
+          if (!('mediaSession' in navigator)) return;
+
+          var originalSetActionHandler = navigator.mediaSession.setActionHandler.bind(navigator.mediaSession);
+          var protectedActions = new Set(['play', 'pause', 'previoustrack', 'nexttrack', 'seekbackward', 'seekforward', 'seekto']);
+
+          navigator.mediaSession.setActionHandler = function(action, handler) {
+            if (protectedActions.has(action)) return;
+            originalSetActionHandler(action, handler);
+          };
+
+          originalSetActionHandler('play', function() { if (window.boppaPlay) window.boppaPlay(); });
+          originalSetActionHandler('pause', function() { if (window.boppaPause) window.boppaPause(); });
+          originalSetActionHandler('seekbackward', null);
+          originalSetActionHandler('seekforward', null);
+          originalSetActionHandler('seekto', function(details) {
+            if (window.boppaSeek) window.boppaSeek((details && details.seekTime != null ? details.seekTime : 0) * 1000);
+          });
+          originalSetActionHandler('previoustrack', function() { postEvent({type: 'previoustrackCommand'}); });
+          originalSetActionHandler('nexttrack', function() { postEvent({type: 'nexttrackCommand'}); });
+
+          var playbackStateDescriptor = Object.getOwnPropertyDescriptor(navigator.mediaSession.__proto__, 'playbackState')
+            || Object.getOwnPropertyDescriptor(navigator.mediaSession, 'playbackState');
+          window.__boppaOriginalPlaybackStateSetter = playbackStateDescriptor && playbackStateDescriptor.set
+            ? playbackStateDescriptor.set.bind(navigator.mediaSession) : null;
+          window.__boppaPlaybackState = 'paused';
+          if (window.__boppaOriginalPlaybackStateSetter) {
+            window.__boppaOriginalPlaybackStateSetter.call(navigator.mediaSession, 'paused');
+            Object.defineProperty(navigator.mediaSession, 'playbackState', {
+              get: function() { return window.__boppaPlaybackState; },
+              set: function(val) {},
+              configurable: true
+            });
+          }
+
+          window.__boppaOriginalSetPositionState = navigator.mediaSession.setPositionState.bind(navigator.mediaSession);
+          window.__boppaDuration = 0;
+          window.__boppaPlaybackRate = 1.0;
+          window.__boppaPosition = 0;
+          window.__boppaPositionTimestamp = Date.now();
+          window.__boppaGetCurrentPosition = function() {
+            var elapsed = (Date.now() - window.__boppaPositionTimestamp) / 1000.0;
+            var pos = window.__boppaPosition + elapsed * window.__boppaPlaybackRate;
+            return Math.max(0, Math.min(pos, window.__boppaDuration || pos));
+          };
+          navigator.mediaSession.setPositionState = function(state) {};
+
+          setInterval(function() {
+            if (window.__boppaOriginalSetPositionState && window.__boppaDuration > 0) {
+              try {
+                var pos = window.__boppaGetCurrentPosition ? window.__boppaGetCurrentPosition() : window.__boppaPosition;
+                window.__boppaOriginalSetPositionState.call(navigator.mediaSession, {
+                  duration: window.__boppaDuration,
+                  playbackRate: window.__boppaPlaybackRate || 1.0,
+                  position: Math.max(0, Math.min(pos, window.__boppaDuration))
+                });
+              } catch (e) {}
+            }
+          }, 250);
+
+          var metadataDescriptor = Object.getOwnPropertyDescriptor(navigator.mediaSession.__proto__, 'metadata')
+            || Object.getOwnPropertyDescriptor(navigator.mediaSession, 'metadata');
+          var originalMetadataSetter = metadataDescriptor && metadataDescriptor.set;
+          window.__boppaOriginalMetadataSetter = originalMetadataSetter ? originalMetadataSetter.bind(navigator.mediaSession) : null;
+          var boppaMetadata = new MediaMetadata({ title: 'Title', artist: 'Artist' });
+          if (originalMetadataSetter) {
+            originalMetadataSetter.call(navigator.mediaSession, boppaMetadata);
+            Object.defineProperty(navigator.mediaSession, 'metadata', {
+              get: function() { return boppaMetadata; },
+              set: function(val) { originalMetadataSetter.call(navigator.mediaSession, boppaMetadata); },
+              configurable: true
+            });
+          } else {
+            navigator.mediaSession.metadata = boppaMetadata;
+          }
+
+          window.__boppaSetMediaSession = function(opts) {
+            if (opts.playbackState) {
+              window.__boppaPlaybackState = opts.playbackState;
+              if (window.__boppaOriginalPlaybackStateSetter) {
+                window.__boppaOriginalPlaybackStateSetter.call(navigator.mediaSession, opts.playbackState);
+              }
+            }
+            if (opts.title !== undefined || opts.artist !== undefined || opts.artworkUrl !== undefined) {
+              var init = { title: opts.title || '', artist: opts.artist || '' };
+              if (opts.artworkUrl) init.artwork = [{ src: opts.artworkUrl }];
+              var newMeta = new MediaMetadata(init);
+              if (window.__boppaOriginalMetadataSetter) {
+                window.__boppaOriginalMetadataSetter.call(navigator.mediaSession, newMeta);
+                Object.defineProperty(navigator.mediaSession, 'metadata', {
+                  get: function() { return newMeta; },
+                  set: function(val) { window.__boppaOriginalMetadataSetter.call(navigator.mediaSession, newMeta); },
+                  configurable: true
+                });
+              } else {
+                navigator.mediaSession.metadata = newMeta;
+              }
+            }
+            if (opts.duration !== undefined) window.__boppaDuration = opts.duration;
+            if (opts.playbackRate !== undefined) window.__boppaPlaybackRate = opts.playbackRate;
+            if (opts.position !== undefined) {
+              window.__boppaPosition = opts.position;
+              window.__boppaPositionTimestamp = Date.now();
+            }
+            if (window.__boppaOriginalSetPositionState && window.__boppaDuration > 0) {
+              try {
+                var pos = opts.position !== undefined ? opts.position : (window.__boppaGetCurrentPosition ? window.__boppaGetCurrentPosition() : window.__boppaPosition);
+                window.__boppaPosition = Math.max(0, Math.min(pos, window.__boppaDuration));
+                window.__boppaPositionTimestamp = Date.now();
+                window.__boppaOriginalSetPositionState.call(navigator.mediaSession, {
+                  duration: window.__boppaDuration,
+                  playbackRate: window.__boppaPlaybackRate || 1.0,
+                  position: window.__boppaPosition
+                });
+              } catch (e) {}
+            }
+          };
+
+        })();
+      injectionTime: atDocumentStart
+    - title: Keepalive Audio and Player Bridge
+      content: |
+        (function() {
+          'use strict';
+          if (window !== window.top) return;
+
+          var boppaKeepaliveAudio = (function() {
+            var sampleRate = 44100, duration = 1, numSamples = sampleRate * duration;
+            var buffer = new ArrayBuffer(44 + numSamples * 2);
+            var view = new DataView(buffer);
+            var offset = 0;
+            function writeString(s) { for (var i = 0; i < s.length; i++) view.setUint8(offset++, s.charCodeAt(i)); }
+            function writeUint32(v) { view.setUint32(offset, v, true); offset += 4; }
+            function writeUint16(v) { view.setUint16(offset, v, true); offset += 2; }
+            writeString('RIFF');
+            writeUint32(36 + numSamples * 2);
+            writeString('WAVE');
+            writeString('fmt ');
+            writeUint32(16);
+            writeUint16(1);
+            writeUint16(1);
+            writeUint32(sampleRate);
+            writeUint32(sampleRate * 2);
+            writeUint16(2);
+            writeUint16(16);
+            writeString('data');
+            writeUint32(numSamples * 2);
+            for (var i = 0; i < numSamples; i++) {
+              var t = i / sampleRate;
+              var sample = Math.round(Math.sin(2 * Math.PI * 20 * t) * 3);
+              view.setInt16(offset, sample, true); offset += 2;
+            }
+            var binary = '';
+            var bytes = new Uint8Array(buffer);
+            for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+            var dataUri = 'data:audio/wav;base64,' + btoa(binary);
+            var audio = document.createElement('audio');
+            audio.id = 'boppa-keepalive-audio';
+            audio.src = dataUri;
+            audio.muted = true;
+            audio.loop = true;
+            audio.volume = 0.0001;
+            audio.playbackRate = 0.0001;
+            document.body.appendChild(audio);
+            return audio;
+          })();
+
+          var frame = document.getElementById('player-frame');
+          var iframeReady = false;
+          var pendingCommands = [];
+
+          function sendToIframe(msg) {
+            if (frame && frame.contentWindow && iframeReady) {
+              frame.contentWindow.postMessage(msg, '*');
+            } else {
+              pendingCommands.push(msg);
+            }
+          }
+
+          window.addEventListener('message', function(event) {
+            var msg = event.data;
+            if (!msg || !msg.type) return;
+            if (msg.type === 'boppaIframeReady') {
+              iframeReady = true;
+              var cmds = pendingCommands.slice();
+              pendingCommands = [];
+              for (var i = 0; i < cmds.length; i++) sendToIframe(cmds[i]);
+            } else if (msg.type === 'boppaMediaPlaying') {
+              if (window.__boppaSetMediaSession) window.__boppaSetMediaSession({ playbackRate: 1.0, playbackState: 'playing' });
+            } else if (msg.type === 'boppaMediaDuration') {
+              if (window.__boppaSetMediaSession) window.__boppaSetMediaSession({ duration: msg.value });
+            }
+          });
+
+          window.boppaLoad = function(trackData) {
+            boppaKeepaliveAudio.play();
+            boppaKeepaliveAudio.muted = false;
+            if (window.__boppaSetMediaSession) {
+              window.__boppaSetMediaSession({
+                title: trackData.title,
+                artist: trackData.subtitle,
+                artworkUrl: trackData.highResArtworkUrl || trackData.lowResArtworkUrl,
+                duration: trackData.duration ? trackData.duration / 1000 : 0,
+                playbackRate: 0,
+                position: 0,
+                playbackState: 'playing'
+              });
+            }
+            sendToIframe({type: 'boppaLoad', data: trackData});
+          };
+          window.boppaPlay = function() {
+            boppaKeepaliveAudio.play();
+            boppaKeepaliveAudio.muted = false;
+            sendToIframe({type: 'boppaPlay'});
+          };
+          window.boppaPause = function() {
+            boppaKeepaliveAudio.pause();
+            sendToIframe({type: 'boppaPause'});
+          };
+          window.boppaSeek = function(ms) {
+            if (window.__boppaSetMediaSession) window.__boppaSetMediaSession({ position: ms / 1000 });
+            sendToIframe({type: 'boppaSeek', data: ms});
+          };
+          window.boppaStop = function() {
+            boppaKeepaliveAudio.muted = true;
+            sendToIframe({type: 'boppaPause'});
+            if (window.__boppaSetMediaSession) window.__boppaSetMediaSession({ title: 'Title', artist: 'Artist', artworkUrl: 'https://boppa.app/placeholder.png', playbackState: 'paused' });
+          };
+          window.boppaMute = function() { sendToIframe({type: 'boppaMute'}); };
+          window.boppaUnmute = function() { sendToIframe({type: 'boppaUnmute'}); };
+        })();
+      injectionTime: atDocumentEnd
+    - title: Iframe Audio Player
+      content: |
+        (function() {
+          'use strict';
+          if (window === window.top) return;
+
+          var pendingCommands = [];
+          var ready = false;
+          var audio = null;
+
+          function pauseAudio(options) {
+            if (!audio) return;
+            audio.pause();
+            if (!options || !options.suppressPausePostEvent) postEvent({type: 'pause'});
+          }
+
+          window.addEventListener('message', function(event) {
+            var msg = event.data;
+            if (!msg || !msg.type || !msg.type.startsWith('boppa')) return;
+            if (!ready) { pendingCommands.push(msg); return; }
+            handleCommand(msg);
+          });
+
+          function handleCommand(msg) {
+            switch (msg.type) {
+              case 'boppaLoad': doLoadTrack(msg.data); break;
+              case 'boppaPlay': if (audio) audio.play(); break;
+              case 'boppaPause': pauseAudio(); break;
+              case 'boppaSeek': if (audio) audio.currentTime = msg.data / 1000; break;
+              case 'boppaMute': if (audio) audio.muted = true; break;
+              case 'boppaUnmute': if (audio) audio.muted = false; break;
+            }
+          }
+
+          function loadStream(fetchUrl) {
+            fetch(fetchUrl)
+              .then(function(resp) { return resp.json(); })
+              .then(function(data) {
+                if (data && data.url) {
+                  audio.src = data.url;
+                  audio.play().catch(function(e) {
+                    postEvent({type: 'error', message: 'Playback failed: ' + e.message});
+                  });
+                } else {
+                  postEvent({type: 'error', message: 'No stream URL returned'});
+                }
+              })
+              .catch(function(e) {
+                postEvent({type: 'error', message: 'Stream fetch failed: ' + e.message});
+              });
+          }
+
+          function doLoadTrack(trackData) {
+            pauseAudio({suppressPausePostEvent: true});
+            var streamRequestUrl = trackData.metadata && trackData.metadata.streamRequestUrl;
+            var clientId = trackData.context && trackData.context.SOUNDCLOUD_CLIENT_ID;
+            if (streamRequestUrl && clientId) {
+              loadStream(streamRequestUrl + '?client_id=' + clientId);
+            } else {
+              postEvent({type: 'error', message: 'Missing stream URL'});
+            }
+          }
+
+          function flushPendingCommands() {
+            ready = true;
+            var cmds = pendingCommands.slice();
+            pendingCommands = [];
+            for (var i = 0; i < cmds.length; i++) handleCommand(cmds[i]);
+          }
+
+          function setup() {
+            document.documentElement.innerHTML = '<head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body style="margin:0;background:#000;"><audio id="boppa-player"></audio></body>';
+            audio = document.getElementById('boppa-player');
+
+            audio.addEventListener('loadedmetadata', function() {
+              postEvent({type: 'duration', value: audio.duration});
+              window.parent.postMessage({type: 'boppaMediaDuration', value: audio.duration}, '*');
+            });
+
+            audio.addEventListener('playing', function() {
+              postEvent({type: 'play'});
+              window.parent.postMessage({type: 'boppaMediaPlaying'}, '*');
+            });
+
+            audio.addEventListener('timeupdate', function() {
+              postEvent({type: 'progress', currentTime: audio.currentTime, duration: audio.duration});
+            });
+
+            audio.addEventListener('ended', function() {
+              postEvent({type: 'finish'});
+            });
+
+            audio.addEventListener('error', function() {
+              postEvent({type: 'error', message: 'Audio element error: ' + (audio.error?.message || 'unknown')});
+            });
+
+            var placeholder = document.createElement('div');
+            placeholder.id = audio.id;
+            placeholder.className = audio.className;
+            if (audio.parentNode) {
+              audio.parentNode.replaceChild(placeholder, audio);
+            }
+
+            window.parent.postMessage({type: 'boppaIframeReady'}, '*');
+            flushPendingCommands();
+          }
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setup);
+          } else {
+            setup();
+          }
+        })();
+      injectionTime: atDocumentEnd
