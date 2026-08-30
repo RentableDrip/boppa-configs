@@ -1,5 +1,5 @@
 id: soundcloud.com
-version: 0.1.1
+version: 0.1.2
 name: SoundCloud
 url: soundcloud.com
 iconSvg: |-
@@ -901,6 +901,8 @@ playback:
           var audio = document.createElement('audio');
           audio.id = 'boppa-player';
           document.body.appendChild(audio);
+
+          var currentLoadToken = null;
 
           function reportEvent(evt, tokenOverride) {
             var tagged = {};
