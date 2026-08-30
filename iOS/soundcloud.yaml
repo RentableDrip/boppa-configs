@@ -1,5 +1,5 @@
 id: soundcloud.com
-version: 0.1.2
+version: 0.1.3
 name: SoundCloud
 url: soundcloud.com
 iconSvg: |-
@@ -725,7 +725,7 @@ playback:
           var artworkLoadToken = 0;
 
           function wrapArtworkUrl(url) {
-            return 'boppa-artwork://cache?url=' + encodeURIComponent(url);
+            return 'boppa-artwork://cache?url=' + url;
           }
 
           function isArtworkUrlReachable(url) {
